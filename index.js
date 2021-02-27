@@ -51,14 +51,6 @@ const fs = require("fs")
 
 
 
-
-//console.log(txDataFile.players) // returns all fields
-
-/*let timestamp = 1611175240
-var myDate = new Date( timestamp*1000);
-console.log(myDate.toGMTString())
-*/
-
 function secondsToDhms(seconds) {
   seconds = Number(seconds);
   var d = Math.floor(seconds / (3600*24));
@@ -615,98 +607,6 @@ client.on('message', message => {
 
 
 
-var mysql = require('mysql');
-
-
-
-var con = mysql.createConnection({
-  host: "85.214.73.93",
-  user: "atlas",
-  password: "9GxOaKBqwSWORFCyUuIOtuIJYNPaz5e4",
-  database: "atlas"
-});
-
-con.connect(err => {
-  if(err) throw err;
-  console.log(`Logged into: atlas database`);
-});
-client.on('ready', () => {
-  setInterval(() => {
-    con.query(`SELECT * FROM atlas.airlines ORDER BY airline_value DESC`, (err, rows) => {
-      let p1 = rows[0].airline_value;
-      let p2 = rows[1].airline_value;
-      let p3 = rows[2].airline_value;
-      let p4 = rows[3].airline_value;
-      let p5 = rows[4].airline_value;
-      let p6 = rows[5].airline_value;
-      let p7 = rows[6].airline_value;
-      let p8 = rows[7].airline_value;
-      let p9 = rows[8].airline_value;
-      let p10 = rows[9].airline_value;
-
-      let name1 = rows[0].airline_name;
-      let name2 = rows[1].airline_name;
-      let name3 = rows[2].airline_name;
-      let name4 = rows[3].airline_name;
-      let name5 = rows[4].airline_name;
-      let name6 = rows[5].airline_name;
-      let name7 = rows[6].airline_name;
-      let name8 = rows[7].airline_name;
-      let name9 = rows[8].airline_name;
-      let name10 = rows[9].airline_name;
-
-      let owner1 = rows[0].owner_id;
-      let owner2 = rows[1].owner_id;
-      let owner3 = rows[2].owner_id;
-      let owner4 = rows[3].owner_id;
-      let owner5 = rows[4].owner_id;
-      let owner6 = rows[5].owner_id;
-      let owner7 = rows[6].owner_id;
-      let owner8 = rows[7].owner_id;
-      let owner9 = rows[8].owner_id;
-      let owner10 = rows[9].owner_id;
-
-      const mainServer = client.guilds.get('742798585086607401');
-      const vaChannel = mainServer.channels.get('803341599148343326');
-      const messageID = '803341708833849404';
-
-      const leaderboard = new RichEmbed()
-      .setColor(config.embedColor)
-      .setTitle(`**__VA Leaderboards__** [LIVE]`)
-      .addField(`**#1** - ${name1}`, `Value: \`$${p1}\` | Owner: <@${owner1}>`)
-      .addField(`**#2** - ${name2}`, `Value: \`$${p2}\` | Owner: <@${owner2}>`)
-      .addField(`**#3** - ${name3}`, `Value: \`$${p3}\` | Owner: <@${owner3}>`)
-      .addField(`**#4** - ${name4}`, `Value: \`$${p4}\` | Owner: <@${owner4}>`)
-      .addField(`**#5** - ${name5}`, `Value: \`$${p5}\` | Owner: <@${owner5}>`)
-      .addField(`**#6** - ${name6}`, `Value: \`$${p6}\` | Owner: <@${owner6}>`)
-      .addField(`**#7** - ${name7}`, `Value: \`$${p7}\` | Owner: <@${owner7}>`)
-      .addField(`**#8** - ${name8}`, `Value: \`$${p8}\` | Owner: <@${owner8}>`)
-      .addField(`**#9** - ${name9}`, `Value: \`$${p8}\` | Owner: <@${owner9}>`)
-      .addField(`**#10** - ${name10}`, `Value: \`$${p10}\` | Owner: <@${owner10}>`)
-      .setFooter(`Updates every 60 seconds - va.lucaasflightsim.xyz`);
-      vaChannel.fetchMessage(messageID).then(msg => {
-        msg.edit(leaderboard)
-      })
-
-    })
-  }, 60000);
-})
-client.on('message', message => {
-  if(message.author.bot || !message.guild) return;
-  if(message.content === `${prefix}va`) {
-    let names = [];
-    con.query(`SELECT * FROM atlas.airlines`, (err, rows) => {
-      rows.forEach(r => {
-        names.push(r.airline_name)
-      })
-      const embed = new RichEmbed()
-      .setTitle(`**Current Virtual Airlines**`)
-      .setColor(config.embedColor)
-      .setDescription(`\`${names.join(',\` \`').toString()}\``)
-      message.channel.send(embed)
-    })
-  }
-})
 
 
 client.login(config.token)
