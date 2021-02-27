@@ -3,7 +3,7 @@
 module.exports = {
 
     // bot system essentials
-    "token": "ODAyNzE4OTE5NDI4Mjc2MjI1.YAzUQA.BgBHpek47Khafamw0rAHkqhlwyI",
+    "token": "xxx",
     "embedColor": "#47ffbf",
     "prefix": "+",
     
