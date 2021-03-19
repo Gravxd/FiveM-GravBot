@@ -28,25 +28,17 @@ Grav
 
 
 const { Client, RichEmbed } = require("discord.js");
-
 const Discord = require("discord.js");
-
 const config = require('./config.js');
-
 const client = new Client({
   disableEveryone: true // set to false if you want the bot to be able to ping @ everyone
 });
-
 const prefix = config.prefix; // Prefix for all commands
+const fs = require("fs")
 
 client.on("ready", () => {
   console.log(`Bot launched successfully. Logged in as: ${client.user.tag}`);
 });
-
-const fs = require("fs")
-
-
-
 
 function secondsToDhms(seconds) {
   seconds = Number(seconds);
@@ -60,10 +52,6 @@ function secondsToDhms(seconds) {
   var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
   return dDisplay + hDisplay + mDisplay + sDisplay;
   }
-//console.log(secondsToDhms(minute))
-
-
-// the red barrier sign emoji
 
 const noEmoji = ':no_entry_sign:';
 const wrenchEmoji = ':wrench:';
@@ -82,22 +70,17 @@ const logsCMD = prefix + config.modlogsCMD;
 const aboutCMD = prefix + config.aboutCMD;
 const helpCMD = prefix + config.helpCMD;
 
-
 // may be used later
-
 const commandsCMD = `${prefix}commands`;
 const cmdsCMD = `${prefix}cmds`;
 
 // channel controls
-
 const whitelistedChannels = config.whitelisted_channels;
 
 // server (live status requirements)
 
 const serverIP = config.serverIP;
 const serverPort = config.serverPort;
-
-
 
 // ignore the format, its just easier to read & change for people :)
 let bot_commands = [];
@@ -106,21 +89,15 @@ bot_commands.push(`${ptCMD}: Search a user's total playtime`, `${lookupCMD}: Loo
 `${searchCMD}: Search a user via discord mention`,
 `${helpCMD}: Open the support manual`)
 
-
-
 client.on('message', message => {
     if(message.author.bot) return;
-    
     //let txDataFile = JSON.parse(fs.readFileSync("./../../txData/default/data/playersDB.json", "utf8"));
   let txDataFile = require("../../txData/default/data/playersDB.json"); // This should be the directory of playersDB.json
-
   if(message.guild) {
     if(config.enableWhitelistedChannels === 'Yes') {
-
     let whitelistedUserRoles = [];
     let whitelistedChannelConfirm = [];
     let whitelistedChannelList = [];
-
     whitelistedChannels.forEach(channel => {
       if(message.channel.id === channel) {
         whitelistedChannelList.push(channel)
@@ -128,37 +105,27 @@ client.on('message', message => {
     })
     config.whitelisted_bypass_roles.forEach(role => {
       message.member.roles.forEach(member_role => {
-
         if(member_role.id === role) {
           whitelistedUserRoles.push(role)
         }
-
       })
-      
     }) 
     if(!whitelistedChannelList.length) {
-
       if(!whitelistedUserRoles.length) {
         return;
       }
-
     }
-    
   }
   }
   if(message.content.toLowerCase().startsWith(aboutCMD)) {
-
     // uptime
     let uptime_days = Math.floor(client.uptime / 86400000);
     let uptime_hours = Math.floor(client.uptime / 3600000) % 24;
     let uptime_minutes = Math.floor(client.uptime / 60000) % 60;
     let uptime_seconds = Math.floor(client.uptime / 1000) % 60;
-
     // getting the amount of warns + bans
-
     let tx_ban_amount = [];
     let tx_warn_amount = []; // Build ourselves some empty arrays for later use
-
     txDataFile.actions.forEach(action => {
       if(action.type === 'warn') {
         tx_warn_amount.push(action) // We are only pushing the action object, as we don't need specific information from the array, just the object itself
@@ -168,7 +135,6 @@ client.on('message', message => {
       }
     })
     // For each action in the database, we are pushing any actions that match our target type into our arrays. Im pushing any bans into tx_ban_amount and warns into tx_warn_amount
-
     if(!tx_warn_amount.length) {
       tx_warns = '0';
     } else {
@@ -181,8 +147,6 @@ client.on('message', message => {
     } else {
       tx_bans = tx_ban_amount.length;
     }
-
-
     const about_embed = new RichEmbed()
     .setColor(config.embedColor)
     .setTitle(`**__GravBot [FIVEM EDITION]__**`)
@@ -192,21 +156,17 @@ client.on('message', message => {
     .addField(`**Uptime**`, `${uptime_days}d ${uptime_hours}h ${uptime_minutes}m ${uptime_seconds}s`)
     .addField(`**Server Punishments**`, `\`${tx_bans}\` Bans & \`${tx_warns}\` Warns`)
     message.channel.send(about_embed)
-
   } 
   else if(message.content.toLowerCase().startsWith(helpCMD)) {
-
     const help_embed = new RichEmbed()
     .setColor(config.embedColor)
     .setTitle(`**__Support Manual__**`)
     .setDescription(`\`\`\`${bot_commands.join('\n')}\`\`\``)
-
     message.channel.send(help_embed)
   }
   else if(message.content.toLowerCase().startsWith(ptCMD)) {
     if(message.author.bot || !message.guild) return;
     const args = message.content.substring(ptCMD.length).split(" ");
-
     const input = args.slice(1).join(" ");
     /*if(!input) {
       const no_input = new RichEmbed()
@@ -215,20 +175,15 @@ client.on('message', message => {
       return message.channel.send(no_input)
     }*/
     if(message.content.toLowerCase() === ptCMD) {
-
       const usage_playtime = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${wrenchEmoji} **| Usage:** \`${ptCMD} [name]\``)
       return message.channel.send(usage_playtime)
-
     }
-
     const filtered = txDataFile.players.filter(e => e.name.toLowerCase().includes(input.toLowerCase()));
-
     if(filtered.length > 0) {
       let ab = '';
       for(var n in filtered) {
-
         let unix_timestamp = filtered[n].tsLastConnection;
           var date = new Date(unix_timestamp * 1000);
           var hours = date.getHours();
@@ -239,45 +194,34 @@ client.on('message', message => {
           let actionDate3 = (actionDate2 + ' | ' + formattedTime);
         ab += `\n\n**${parseInt(n) + 1})** **Name:** ${filtered[n].name} | **FiveM ID:** ${filtered[n].license.substring(0,4)}... | **Playtime:** ${secondsToDhms(filtered[n].playTime*60)} | **Last Connected:** ${actionDate3}`
       }
-
       if(ab.length > 2000) {
         const exceeding_size = new RichEmbed()
         .setColor(config.embedColor)
         .setDescription(`${noEmoji} | Your query returned too many results.. Try searching for a more specific username!`);
         return message.channel.send(exceeding_size)
       }
-
       const result_embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`Your query returned \`${filtered.length}\` users!\n${ab}`)
       message.channel.send(result_embed)
-
     } else {
-    
       const no_results_embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${noEmoji} **| Your query returned no results!**`);
       return message.channel.send(no_results_embed)
     }
   }
-
   else if(message.content.toLowerCase().startsWith(lookupCMD)) {
     const args = message.content.substring(lookupCMD.length).split(" ");
     const type = args[1];
     const input = args.slice(2).join(" ");
-
-
     if(message.content.toLowerCase() === `${prefix}lookup`) {
-
       const usage_embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${wrenchEmoji} **| Usage:** \`${lookupCMD} [type] [input]\`\n\n**Examples:**\n \`${lookupCMD} id steam:11000011bad90ed\`\n\`${lookupCMD} name Grav\`\n\n**Supported Types:**\n\`id (steam, license)\`\n\`name\`\n\nBy searching with the \`name\` type, you need to be case sensitive & it will output identifiers.\n\nUsing the \`id\` type will result in an output of the user's punishments.`)
       return message.channel.send(usage_embed)
-
     }
-
     if(type === 'name') {
-
       if(!input) {
         const no_input = new RichEmbed()
         .setColor(config.embedColor)
@@ -285,28 +229,23 @@ client.on('message', message => {
         return message.channel.send(no_input)
       } else {
     const filtered = txDataFile.actions.filter(e => e.playerName === input);
-
     if(filtered.length > 0) {
       let ab = '';
       for(var n in filtered) {
         let connectionValue = [];
         ab += `\n\n**${parseInt(n) + 1})** **Name:** ${filtered[n].playerName} \`${filtered[n].identifiers}\``
       }
-
       if(ab.length > 2048) {
         const exceeding_size = new RichEmbed()
         .setColor(config.embedColor)
         .setDescription(`${noEmoji} | Your query returned too many results.. Try searching for a more specific username!`);
         return message.channel.send(exceeding_size)
       }
-
       const result_embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`Your query returned \`${filtered.length}\` users!\n${ab}`)
       message.channel.send(result_embed)
-
     } else {
-
       const no_results_embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${noEmoji} **| Your query returned no results!**`);
@@ -314,46 +253,31 @@ client.on('message', message => {
     }
       } // if name is provided as the lookup type
     } else if(type === 'id') {
-
       if(!input) {
-
         const no_input = new RichEmbed()
         .setColor(config.embedColor)
         .setDescription(`${noEmoji} **| Please provide a valid id to search!**\n\`Usage: ${lookupCMD} id discord:516341620967473165\``)
         return message.channel.send(no_input)
-
       } else { // if someone provides some input
-
         if(
           !input.toLowerCase().startsWith('steam:') && 
           !input.toLowerCase().startsWith('license:') && 
           !input.toLowerCase().startsWith('discord:')
         ) {
-          
           const invalid_input = new RichEmbed()
           .setColor(config.embedColor)
           .setDescription(`${noEmoji} **| You did not provide a valid \`id\` in the form of license or steam!**`)
           return message.channel.send(invalid_input)
-
         } else { 
-
             if(input.toLowerCase().startsWith('steam:')) {
-
               let userIDs = [];
               txDataFile.actions.forEach(action => {
-
                 if(action.identifiers.includes(input)) {
-
-
                   let actionTS = new Date( action.timestamp*1000);
                   let actionDate = actionTS.toGMTString(actionTS)
                   userIDs.push(`[${action.type}] Reason: ${action.reason} | Moderator: ${action.author} | ${actionDate}`)
-
-
                 }
               })
-
-
               if(!userIDs.length) {
                 const no_results_user = new RichEmbed()
                 .setColor(config.embedColor)
@@ -364,70 +288,43 @@ client.on('message', message => {
               .setColor(config.embedColor)
               .setDescription(`**Results**\n${userIDs.join('\n')}`)
               message.channel.send(embed)
-              
             } else if(input.toLowerCase().startsWith('discord:')) {
-
             } else {
-              
             }
         }
       }
     }
   } // lookup cmd end
   else if(message.content.toLowerCase().startsWith(searchCMD)) { // this is a lookup command only to be used via +discord @user // Not mentioning a user will not work
-    
     if(message.content.toLowerCase() === searchCMD) {
-
       const usage_search = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${wrenchEmoji} **| Usage:** \`${searchCMD} @user\``)
       return message.channel.send(usage_search)
-
     }
-    
     if(message.mentions.members.size === 1) {
-
-
       const lookupMember = message.mentions.members.first();
-
-
       if(!lookupMember) {
         const error_embed = new RichEmbed()
         .setColor(config.embedColor)
         .setDescription(`${noEmoji} **| There was an error.. Please try again!**`)
         return message.channel.send(error_embed)
       }
-
-
-      const test = txDataFile.actions.filter(e => e.identifiers.includes(`discord:${lookupMember.id}`))
-
-
+     const test = txDataFile.actions.filter(e => e.identifiers.includes(`discord:${lookupMember.id}`))
       if(!test.length) {
         const no_result = new RichEmbed()
         .setColor(config.embedColor)
         .setDescription(`${noEmoji} **| This user has no results!**`);
         return message.channel.send(no_result)
       }
-
-
-      const filtered = test[0].identifiers.filter(e => e.includes('license:'));
-      
+      const filtered = test[0].identifiers.filter(e => e.includes('license:'));    
       const filtered_players = txDataFile.players.filter(e => e.license);
       //console.log(filtered_players)
       let finalUserInfo2 = [];
-
       let finalUserInfo = [];
-
-
-
-
-
       filtered_players.forEach(fp => {
-
         let newID = String(filtered).slice(8);
-
         if(fp.license === newID) {
-
           let unix_timestamp = fp.tsJoined;
           var date = new Date(unix_timestamp * 1000);
           var hours = date.getHours();
@@ -436,32 +333,19 @@ client.on('message', message => {
           var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
           const actionDate2 = date.toDateString()
           let actionDate3 = (actionDate2 + ' | ' + formattedTime);
-
-          //console.log(actionDate)
-
           finalUserInfo.push(`**Playtime:** ${secondsToDhms(fp.playTime*60)}\n**First Login:** ${actionDate2}`)
-
         }
       })
-
-
       if(!finalUserInfo.length) {
         return message.reply(`error!`)
       }
-
-
-      
       const identifiersFilter = txDataFile.actions.filter(function(i, n) {
         if(i.identifiers.includes(String(filtered))) {
           return i.identifiers;
         }
       })
-
-
-
       let steamID = [];
       let licenseID = [];
-
       test[0].identifiers.forEach(i => {
         if(i.startsWith('steam:')) {
           steamID.push(i.slice(6))
@@ -470,8 +354,6 @@ client.on('message', message => {
           licenseID.push(i.slice(8))
         }
       })
-
-
       if(!steamID.length) {
         steamID = 'Not Found!';
       }
@@ -479,77 +361,42 @@ client.on('message', message => {
       if(!licenseID.length) {
         licenseID = 'Not Found!';
       }
-
-
-
       let playerBans = [];
-
-
       let playerWarns = [];
-
       const banFilter = txDataFile.actions.filter(function(i , n) {
         if(i.identifiers.includes(String(filtered))) {
-
-
           let reason;
-
           if(i.type === 'ban') {
-
-
             let actionTS = new Date( i.timestamp*1000);
             let actionDate = actionTS.toGMTString(actionTS)
-
-
-
             if(i.reason.length > 10) {
               reason = i.reason.substring(0, 10) + '..';
             } else {
               reason = i.reason;
             }
-
-
             playerBans.push(`[ban] Reason: ${reason} | Moderator: ${i.author} | ${actionDate}`)
-
-
           }
         }
       })
-
-
       const warnFilter = txDataFile.actions.filter(function(i , n) {
         if(i.identifiers.includes(String(filtered))) {
-
-
-
-          let reason;
+         let reason;
           if(i.type === 'warn') {
-
-
             let actionTS = new Date( i.timestamp*1000);
             let actionDate = actionTS.toGMTString(actionTS)
-
-
             if(i.reason.length > 10) {
               reason = i.reason.substring(0, 10) + '..'; // we dont want to exceed discord embed character limits so we slice our reasoning
             } else {
               reason = i.reason;
             }
-
             playerWarns.push(`[warn] Reason: ${reason} | Moderator: ${i.author} | ${actionDate}`)
           }
-
         }
       })
-
       let playerBanList;
-
       let playerWarnList;
-
       let banAmount;
-
       let warnAmount;
-
-
       if(playerBans.length) {
         playerBanList = playerBans.join('\n')
         banAmount = playerBans.length;
@@ -557,36 +404,26 @@ client.on('message', message => {
         playerBanList = 'None to display';
         banAmount = '0';
       }
-
-
       if(playerWarns.length) {
         playerWarnList = playerWarns.join('\n')
         warnAmount = playerWarns.length;
       } else {
         playerWarnList = 'None to display';
         warnAmouint = '0';
-      }
-
-      
-
-
+      }   
       const embed = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${finalUserInfo[0]}\n\n**__Identifiers__**\n**Hex ID:** \`${steamID}\`\n**License:** \`${licenseID}\`\n\n**__History__**\n**Bans** - \`${banAmount}\`\n${playerBanList}\n**Warns** - \`${warnAmount}\`\n${playerWarnList}`)
       message.channel.send(embed)
-    
     } else {
-
       const invalid_input = new RichEmbed()
       .setColor(config.embedColor)
       .setDescription(`${noEmoji} **| Please mention a user after using \`${searchCMD}\`!**`)
-      return message.channel.send(invalid_input)
-      
+      return message.channel.send(invalid_input)    
     }
   }
   else if(message.content.toLowerCase() === setupCMD) {
     message.channel.send(`Setting up...`).then(msg => {
-      
       const status_setup = new RichEmbed()
         .setColor(config.embedColor)
         .addField(`**Server ID:**`, msg.guild.id)
@@ -597,13 +434,5 @@ client.on('message', message => {
     })
   }
 })
-
-
-
-
-
-
-
-
 
 client.login(config.token)
