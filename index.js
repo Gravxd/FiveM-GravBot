@@ -1,4 +1,6 @@
 /*
+[NO LONGER SUPPORTED/MAINTAINED]
+
 --------------------------------------
 ------Created By Grav------
 --https://github.com/Gravxd--
@@ -8,7 +10,7 @@ Message from Grav:
 
 Hey everyone,
 
-Welcome to TxAdmin Bot for Discord. (Version: 1.0.0)
+Welcome to GravBot for FiveM & Discord. (Version: 1.0.0)
 
 This bot was made because I noticed that a lot of server owners have been requesting Tabarra (Creator of TxAdmin)
 for additions like an APi usable with Discord Bots.
@@ -16,11 +18,6 @@ for additions like an APi usable with Discord Bots.
 I realised that after some testing, I was able to use a discord bot to output most of the important tx information
 like punishments & user stats.
 
-If you have any issues at all with the bot (AFTER FOLLOWING THE INSTRUCTIONS PROPERLY), you can join my discord for support! 
-https://discord.gg/ZYHxxba
-
-If you like this bot, please consider leaving a star on https://github.com/Gravxd/TxAdmin-Bot
-If you are a developer, feel free to push suggestions, additions or changes as I'm nowhere near an expert at this.
 
 Thank you for reading!
 Grav
